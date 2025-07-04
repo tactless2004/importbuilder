@@ -41,7 +41,6 @@ class PythonFilesNotFound(Exception):
     '''
     PythonFilesNotFound is raised when a directory does not contain any .py files.
     '''
-    pass
 
 if __name__ == "__main__":
     search_dir = os.getcwd()
@@ -55,5 +54,5 @@ if __name__ == "__main__":
         raise PythonFilesNotFound(
             f"importbuilder was unable to locate any .py files in directory {search_dir}"
         ) from e
-    
+
     print(deps)
