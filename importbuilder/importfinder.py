@@ -1,3 +1,8 @@
+'''
+importbuilder.importfinder.py
+
+Utilities for finding python dependencies
+'''
 import os
 import sys
 import importlib
@@ -6,8 +11,13 @@ import tomllib
 def find_py_files(root_dir: str) -> list:
     '''
     Use os.walk() to locate files in a directory and subdirectories thereof with the extension .py
+
+    :param root_dir: Directory to search for .py files
     '''
     pt_files = []
+    if not os.path.isdir(root_dir):
+        raise FileNotFoundError(f"{root_dir} could not be located...")
+
     for dirpath, _, files in os.walk(root_dir):
         for file in files:
             split = os.path.splitext(file)
@@ -18,6 +28,8 @@ def find_py_files(root_dir: str) -> list:
 def find_py_dependencies(pt_files: list) -> list:
     '''
     Search through a list of .py files, opening the files and finding imports.
+
+    :param pt_files: List of python file paths in which to search for import statements
     '''
     imports = []
     if not pt_files:
@@ -45,6 +57,8 @@ def find_py_dependencies(pt_files: list) -> list:
 def find_versions_and_pip_name(imports: list) -> list:
     '''
     Search site-packages for pyproject files to determine pip version and install.
+
+    :param imports: List of potentially importable python packages
     '''
     finished_imports = []
     for imp in imports:
@@ -98,11 +112,11 @@ def find_versions_and_pip_name(imports: list) -> list:
 
     return finished_imports
 
-def write_reqs(finished_imports) -> None:
+def write_reqs(finished_imports: list, requirements_file = "requirements.txt") -> None:
     '''
     Create a pip compatible requirements.txt file
     '''
-    with open("requirements.txt", "w+", encoding = "utf-8") as f:
+    with open(requirements_file, "w+", encoding = "utf-8") as f:
         for line in finished_imports:
             f.write(f"{line}\n")
 
@@ -110,19 +124,3 @@ class PythonFilesNotFound(Exception):
     '''
     PythonFilesNotFound is raised when a directory does not contain any .py files.
     '''
-
-if __name__ == "__main__":
-    search_dir = os.getcwd()
-    if len(sys.argv) >= 2:
-        search_dir = sys.argv[1]
-
-    pt_files = find_py_files(search_dir)
-    try:
-        deps = find_py_dependencies(pt_files)
-    except PythonFilesNotFound as e:
-        raise PythonFilesNotFound(
-            f"importbuilder was unable to locate any .py files in directory {search_dir}"
-        ) from e
-
-    requirements = find_versions_and_pip_name(deps)
-    write_reqs(requirements)

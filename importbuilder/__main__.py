@@ -1,28 +1,26 @@
 '''
 __main__.py method for importbuilder.
 '''
-import sys
+import argparse
+from importbuilder import find
 import os
-from importbuilder.importfinder import (
-    find_py_files,
-    find_py_dependencies,
-    find_versions_and_pip_name,
-    write_reqs,
-    PythonFilesNotFound
-)
 
 if __name__ == "__main__":
-    search_dir = os.getcwd()
-    if len(sys.argv) >= 2:
-        search_dir = sys.argv[1]
+    parser = argparse.ArgumentParser(
+                    prog='ImportBuilder',
+                    description='Builds a pip compatible requirements.txt file' +
+                                'by finding imports in a python project and' +
+                                'cross referencing with site-packages' 
+    )
+    parser.add_argument("-f", "--folder")
+    parser.add_argument("-o", "--outputfile")
+    args = parser.parse_args()
 
-    pt_files = find_py_files(search_dir)
-    try:
-        deps = find_py_dependencies(pt_files)
-    except PythonFilesNotFound as e:
-        raise PythonFilesNotFound(
-            f"importbuilder was unable to locate any .py files in directory {search_dir}"
-        ) from e
+    root_dir = args.folder
+    output_file = args.outputfile
+    if not root_dir:
+        root_dir = os.getcwd()
+    if not output_file:
+        output_file = "requirements.txt"
 
-    requirements = find_versions_and_pip_name(deps)
-    write_reqs(requirements)
+    find(root_dir, output_file)
