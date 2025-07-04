@@ -1,10 +1,9 @@
 '''
 importbuilder.importfinder.py
 
-Utilities for finding python dependencies
+Utilities for finding python dependencies.
 '''
 import os
-import sys
 import importlib
 import tomllib
 
@@ -72,7 +71,7 @@ def find_versions_and_pip_name(imports: list) -> list:
                 "try pipreqs"
             )
             return []
-        
+
         try:
             version = namespace.__version__
         # std. library packages do not have __version__
@@ -90,12 +89,12 @@ def find_versions_and_pip_name(imports: list) -> list:
             finished_imports.append(f"{imp}=={version}")
             continue
         try:
-            pyprojecttoml = tomllib.load(
-                open(
+            with open(
                     file = os.path.join(os.path.dirname(install_location), "pyproject.toml"),
                     mode ="rb"
-                )
-            )
+            ) as f:
+                pyprojecttoml = tomllib.load(f)
+
         # If we don't find a pyproject.toml, assume pip name = import name
         except FileNotFoundError:
             finished_imports.append(f"{imp}=={version}")

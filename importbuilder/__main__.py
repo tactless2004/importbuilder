@@ -1,9 +1,11 @@
 '''
-__main__.py method for importbuilder.
+importbuilder.__main__.py
+
+__main__ method to make importbuilder callable in a `python -m module` manner.
 '''
+import os
 import argparse
 from importbuilder import find
-import os
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -21,6 +23,6 @@ if __name__ == "__main__":
     if not root_dir:
         root_dir = os.getcwd()
     if not output_file:
-        output_file = "requirements.txt"
+        output_file = "requirements.txt" #pylint: disable=invalid-name
 
     find(root_dir, output_file)
