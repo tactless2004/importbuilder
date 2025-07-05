@@ -4,7 +4,7 @@ Have you ever built a python project and forgot to use some sort of virtual envi
 
 **ImportBuilder** solves this problem. It searches through your project finding each dependency and determines the correct installed version by searching your site packages. Ultimately creating a pip compatible `requirements.txt` file.
 
-## Install
+## Install 
 **ImportBuilder** uses Python3.12 or later.
 
 ## Usage
@@ -13,3 +13,8 @@ Run **importbuilder** on a python project in a folder `my_project`, then write t
 ```sh
 python -m importbuilder -f my_project -o reqs.txt
 ```
+
+## Roadmap
+
+- [ ] Add PyPi API support
+- [ ] Add PIP install subprocess to run the generated requirements file
